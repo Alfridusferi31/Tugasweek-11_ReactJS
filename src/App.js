@@ -1,13 +1,23 @@
-
-import * as React from 'react';
+import React, { useState } from "react";
 
 function Board() {
-  const squares = Array(9).fill(null);
-  function selectSquare(square) {
+  const [squares, setSquares] = useState(Array(9).fill(null));
+  const [nextValue, setNextValue] = useState("X");
 
+  function selectSquare(square) {
+    if (calculateWinner(squares) || squares[square]) {
+      return;
+    }
+
+    const squaresCopy = [...squares];
+    squaresCopy[square] = nextValue;
+    setSquares(squaresCopy);
+    setNextValue(nextValue === "X" ? "O" : "X");
   }
 
   function restart() {
+    setSquares(Array(9).fill(null));
+    setNextValue("X");
   }
 
   function renderSquare(i) {
@@ -20,54 +30,47 @@ function Board() {
 
   return (
     <div>
-      <div >STATUS</div>
-      <div >
+      <div>
+        STATUS: {calculateStatus(calculateWinner(squares), squares, nextValue)}
+      </div>
+      <div>
         {renderSquare(0)}
         {renderSquare(1)}
         {renderSquare(2)}
       </div>
-      <div >
+      <div>
         {renderSquare(3)}
         {renderSquare(4)}
         {renderSquare(5)}
       </div>
-      <div >
+      <div>
         {renderSquare(6)}
         {renderSquare(7)}
         {renderSquare(8)}
       </div>
-      <button onClick={restart}>
-        restart
-      </button>
+      <button onClick={restart}>Restart</button>
     </div>
   );
 }
 
 function Game() {
   return (
-    <div >
-      <div >
+    <div>
+      <div>
         <Board />
       </div>
     </div>
   );
 }
 
-// eslint-disable-next-line no-unused-vars
 function calculateStatus(winner, squares, nextValue) {
   return winner
     ? `Winner: ${winner}`
     : squares.every(Boolean)
-      ? `Scratch: Cat's game`
-      : `Next player: ${nextValue}`;
+    ? `Scratch: Cat's game`
+    : `Next player: ${nextValue}`;
 }
 
-// eslint-disable-next-line no-unused-vars
-function calculateNextValue(squares) {
-  return squares.filter(Boolean).length % 2 === 0 ? 'X' : 'O';
-}
-
-// eslint-disable-next-line no-unused-vars
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2],
